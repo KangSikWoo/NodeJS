@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
+import { handleUserSignUp } from '../src/controllers/user.controller.js';
 
 dotenv.config();
 
@@ -15,6 +16,9 @@ app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
+// post 생성
+app.post('/api/v1/users/signup', handleUserSignUp);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
