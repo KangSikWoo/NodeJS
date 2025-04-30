@@ -1,5 +1,9 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
+import { PrismaClient } from '@prisma/client';
+
+// 이렇게 하면 ORM이 전송하는 SQL 쿼리가 어떤 형태인지 확인할 수 있음.
+export const prisma = new PrismaClient({ log: ['query'] });
 
 dotenv.config();
 
