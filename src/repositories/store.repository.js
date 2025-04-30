@@ -45,3 +45,26 @@ export const getStore = async (storeId) => {
     conn.release();
   }
 };
+
+import { prisma } from '../db.config.js';
+
+export const getAllStoreReviews = async (storeId) => {
+  const reviews = await prisma.userStoreReview.findMany({
+    select: {
+      id: true,
+      content: true,
+      storeId: true,
+      // prisma에선 populate 기능은 없지만 대신에 include나 select를 사용해 연결된 테이블의 데이터를 가져옴.
+      // populate는 다른 컬렉션의 데이터를 참조해서 자동으로 채워주는 기능
+      userId: true,
+      store: true,
+      user: true,
+    },
+    // 커서 값 넣은 것.
+    where: { storeId: storeId, id: { gt: cursor } },
+    orderBy: { id: 'asc' },
+    take: 5,
+  });
+
+  return reviews;
+};

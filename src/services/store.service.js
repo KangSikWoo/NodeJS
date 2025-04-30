@@ -12,3 +12,9 @@ export const storeRegister = async (data) => {
     throw new Error('이미 존재하는 가게입니다.');
   }
 };
+
+// repositopry를 호출, 이를 DTO로 변환
+export const listStoreReviews = async (storeId) => {
+  const reviews = await getAllStoreReviews(storeId);
+  return responseFromReviews(reviews);
+};
