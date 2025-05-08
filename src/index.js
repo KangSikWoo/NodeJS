@@ -2,11 +2,25 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import { handleUserSignUp } from './controllers/user.controller.js';
+import { userRouter } from './routes/user.route.js';
+import { reviewRouter } from './routes/review.route.js';
+import { missionRouter } from './routes/mission.route.js';
+import { responseHandler } from './middlewares/response.middleware.js';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
+
+app.use(cors()); // cors 방식 허용
+app.use(express.static('public')); // 정적 파일 접근
+app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
+app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
+app.use(responseHandler); // res.success, res.error
+
+app.use('/user', userRouter);
+app.use('/review', reviewRouter);
+app.use('/mission', missionRouter);
 
 /**
  * 공통 응답을 사용할 수 있는 헬퍼 함수 등록
@@ -26,11 +40,6 @@ app.use((req, res, next) => {
 
   next();
 });
-
-app.use(cors()); // cors 방식 허용
-app.use(express.static('public')); // 정적 파일 접근
-app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
-app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
