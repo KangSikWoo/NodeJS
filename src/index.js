@@ -5,6 +5,7 @@ import { handleUserSignUp } from './controllers/user.controller.js';
 import { userRouter } from './routes/user.route.js';
 import { reviewRouter } from './routes/review.route.js';
 import { missionRouter } from './routes/mission.route.js';
+//  response.middleware.js에서 보낸 함수에 이름이 없어도 import할 때 이름을 지어주면 됨.
 import { responseHandler } from './middlewares/response.middleware.js';
 
 dotenv.config();
@@ -16,30 +17,11 @@ app.use(cors()); // cors 방식 허용
 app.use(express.static('public')); // 정적 파일 접근
 app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
-app.use(responseHandler); // res.success, res.error
+app.use(responseHandler); // res.success, res.error 함수 등록
 
 app.use('/user', userRouter);
 app.use('/review', reviewRouter);
 app.use('/mission', missionRouter);
-
-/**
- * 공통 응답을 사용할 수 있는 헬퍼 함수 등록
- */
-app.use((req, res, next) => {
-  res.success = (success) => {
-    return res.json({ resultType: 'SUCCESS', error: null, success });
-  };
-
-  res.error = ({ errorCode = 'unknown', reason = null, data = null }) => {
-    return res.json({
-      resultType: 'FAIL',
-      error: { errorCode, reason, data },
-      success: null,
-    });
-  };
-
-  next();
-});
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -47,21 +29,20 @@ app.get('/', (req, res) => {
 
 app.post('/api/v1/users/signup', handleUserSignUp);
 
-/**
- * 전역 오류를 처리하기 위한 미들웨어
- */
+// 에러 핸들링 미들웨어, 던져진 에러를 잡고 포멧에 맞게 응답
 app.use((err, req, res, next) => {
-  if (res.headersSent) {
-    return next(err);
+  if (err.errorCode) {
+    return res.error({
+      errorCode: err.errorCode,
+      reason: err.reason,
+      data: err.data,
+    });
   }
 
-  res.status(err.statusCode || 500).error({
-    errorCode: err.errorCode || 'unknown',
-    reason: err.reason || err.message || null,
-    data: err.data || null,
-  });
+  console.error(err);
+  return res.error({ errorCode: 'S000', reason: '서버 내부 오류' });
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
 });
