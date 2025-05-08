@@ -131,6 +131,17 @@ exports.Prisma.UserScalarFieldEnum = {
   phoneNumber: 'phoneNumber'
 };
 
+exports.Prisma.FoodCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+};
+
+exports.Prisma.UserFavorCategoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  foodCategoryId: 'foodCategoryId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -150,9 +161,15 @@ exports.Prisma.UserOrderByRelevanceFieldEnum = {
   phoneNumber: 'phoneNumber'
 };
 
+exports.Prisma.FoodCategoryOrderByRelevanceFieldEnum = {
+  name: 'name'
+};
+
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  FoodCategory: 'FoodCategory',
+  UserFavorCategory: 'UserFavorCategory'
 };
 
 /**
